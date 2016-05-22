@@ -22,7 +22,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
+__author__ = 'Bruno Meneuvrier - bruno.meneuvrier@ioxar.fr'
+__version__= 0.1
 
 from pysnmp.hlapi import *
 import sys
@@ -157,7 +158,7 @@ def check_lag(options):
         if numport == 0:
             output = "No lag is defined"
         elif numport == 1:
-            output = output + "1 port is active in lag"
+            output = "OK: 1 port is active in lag"
         else:
             output = "OK: " + str(numport) + " ports are active in lag"
     elif ret_code == RET_CODES["CRITICAL"]:

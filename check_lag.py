@@ -39,7 +39,8 @@ ON_ERROR_RET_CODE = RET_CODES["CRITICAL"]
 IFINDEX_OID =  '.1.3.6.1.2.1.2.2.1.1'
 IFDESCR_OID = '.1.3.6.1.2.1.2.2.1.2'
 IFTYPE_OID = '.1.3.6.1.2.1.2.2.1.3'
-DOT3ADAGGPORTSELECTEDAGGID_OID = '.1.2.840.10006.300.43.1.2.1.1.12'
+#DOT3ADAGGPORTSELECTEDAGGID_OID = '.1.2.840.10006.300.43.1.2.1.1.12'
+DOT3ADAGGPORTACTOROPERKEY_OID = '.1.2.840.10006.300.43.1.2.1.1.5'
 DOT3ADAGGPORTATTACHEDAGGID_OID = '.1.2.840.10006.300.43.1.2.1.1.13'
 
 
@@ -113,7 +114,9 @@ def check_lag(options):
                           UdpTransportTarget((options.hostname, 161)),
                           ContextData(),
                           # dot3adAggPortSelectedAggID
-                          ObjectType(ObjectIdentity(DOT3ADAGGPORTSELECTEDAGGID_OID)),
+                          # ObjectType(ObjectIdentity(DOT3ADAGGPORTSELECTEDAGGID_OID)),
+                          # dot3adAggPortActorOperKey
+                          ObjectType(ObjectIdentity(DOT3ADAGGPORTACTOROPERKEY_OID)),
                           # dot3adAggPortAttachedAggID
                           ObjectType(ObjectIdentity(DOT3ADAGGPORTATTACHEDAGGID_OID)),
                           lexicographicMode=False):
@@ -130,16 +133,18 @@ def check_lag(options):
             break
         else:
             ifidx = int(str(varBinds[0][0]).split('.')[11])
-            # LAG idx has to be different from If idx
+            ## LAG idx has to be different from If idx and different from 0
+            #LAG oper key has to be different from If idx and different from 0
             # in order to be member of a LAG
-            if ifidx != varBinds[0][1]:
+            if ifidx != varBinds[0][1] and varBinds[0][1] != 0:
                 lagmembers.append([ifidx,varBinds[0][1],varBinds[1][1]])
     
     for lagmember in lagmembers:
         numport = numport + 1
         aggregate_name = ''
         port_name =''
-        # If Selected and Attached LAG are different we consider
+        ## If Selected and Attached LAG are different we consider
+        # If Oper Key and Attached LAG are different we consider
         # this port as Inactive in LAG
         if lagmember[1] != lagmember[2]:
             # Find description for port
@@ -152,7 +157,7 @@ def check_lag(options):
                     aggregate_name = aggregate[1]            
                         
             output = output + "Port " + port_name + " is inactive in " + \
-                     aggregate_name + ", "
+                     aggregate_name + "\n"
             ret_code = RET_CODES["CRITICAL"]
     if ret_code == RET_CODES["OK"]:
         if numport == 0:

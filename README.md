@@ -10,7 +10,8 @@ If they are different, are different we consider this port as Inactive in LAG.
 
 This plugin works with lacp or static aggregate. For now, it supports only snmp v2. I plan to support v1 and v3 in the future.
 
-*** Usage:
+** Usage:
+
 ./check_lag.py -h
 ```
 Usage: check_lag.py [options]
@@ -21,6 +22,8 @@ Options:
   -c COMMUNITY, --community=COMMUNITY
                         SNMP Community Name. [Default:public]
 ```
+** Example:
+
 ./check_lag.py -H net001.ioxar.fr
 ```
 OK: 1 port is active in lag
